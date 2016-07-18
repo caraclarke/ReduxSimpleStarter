@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import { fetchWeather } from '../actions/index';
 
-export default class SearchBar extends Component {
+class SearchBar extends Component {
 
   constructor(props) {
     super(props);
@@ -12,13 +12,14 @@ export default class SearchBar extends Component {
     // value of input mapped to this.state.term
     this.state = { term: '' }
 
-    // bind context of onInputChange
     /*
       (after equal sign) **this** refers to instance of SearchBar has a function called onInputChange
 
       bind that function to **this**(SearchBar) and replace onInputChange with new bound instance of function
     */
+    // bind context
     this.onInputChange = this.onInputChange.bind(this);
+    this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
   onInputChange(event) {
@@ -29,6 +30,8 @@ export default class SearchBar extends Component {
     event.preventDefault();
 
     // need to go fetch weather data
+    this.props.fetchWeather(this.state.term);
+    this.setState({ term: '' });
   }
 
   render() {
@@ -47,3 +50,14 @@ export default class SearchBar extends Component {
     );
   }
 }
+
+function mapDispatchToProps(dispatch) {
+  // this causes action creator whenever called
+  // returns action, bindActionCreators with dispatch makes sure action flows into middleware and reducer
+  return bindActionCreators({ fetchWeather }, dispatch);
+}
+
+/*
+  passing in null because whenever passing in function that is supposed to map dispatch to props it always goes in as second argument
+*/
+export default connect(null, mapDispatchToProps)(SearchBar);
